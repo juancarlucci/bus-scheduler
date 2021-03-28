@@ -15,6 +15,7 @@ const BusScheduler = () => {
         { "id": 99, "startTime": 280, "endTime": 430 }
     ]);
     const [busTripsObj, setbusTripsObj] = useState({});
+    const [originalNumberOfBuses, setOriginalNumberOfBuses] = useState(null);
     const [areTripsOverlapping, setAreTripsOverlapping] = useState(false);
     const [haveError, setHaveError] = useState(false);
     const [selectedTrip, setSelectedTrip] = useState(null);
@@ -22,14 +23,11 @@ const BusScheduler = () => {
     const handleTripItemClick = (e, tripId) => {
         e.stopPropagation();
 
-
         if(tripId === selectedTrip){
             setSelectedTrip(false);
         } else {
             setSelectedTrip(tripId);
         }
-
-        appendEmptyBusToBusTripsObj();
     };
 
     useEffect(() => {
@@ -57,81 +55,97 @@ const BusScheduler = () => {
         let tempArr = [];
 
         const allTrips = tripsData.map((trip, index)=>{
+
             let inx = index += 1;
+            setOriginalNumberOfBuses(inx);
             return busTripsObj[inx] = {[trip.id]:trip};
         });
+
+        const maxTripValue = Math.max.apply(Math, tripsData.map(function(o) { return o.endTime; }));
+        const minTripValue = Math.min.apply(Math, tripsData.map(function(o) { return o.startTime; }));
 
         setbusTripsObj(busTripsObj);
     }, []);
 
+    useEffect(()=>{
+        appendEmptyBusToBusTripsObj();
+    }, [selectedTrip]);
+
     const appendEmptyBusToBusTripsObj = () => {
 
-        if(selectedTrip){
-            console.log("appendEmptyBusToBusTripsObj()");
-            // console.log("last", Object.keys(busTripsObj).length);
+        let lastKey = Object.keys(busTripsObj).length;
+        //* Checks if a trip is selected and last bus not empty
+        if(selectedTrip && Object.keys(busTripsObj[lastKey]).length > 0){
+            removeLastEmptyBus();
             let updatedIndex = Object.keys(busTripsObj).length +1;
-            busTripsObj[updatedIndex] = {};
             const tempCopy = {...busTripsObj};
+            tempCopy[updatedIndex] = {};
+
             setbusTripsObj(tempCopy);
+
         }
+
     };
 
     const removeLastEmptyBus = () => {
         let lastKey = Object.keys(busTripsObj).length;
-        let lastBusNonSelected = busTripsObj[Object.keys(busTripsObj)[Object.keys(busTripsObj).length - 1]]
         const tempCopy = {...busTripsObj};
-        if (Object.entries(lastBusNonSelected).length === 0 || lastBusNonSelected === false ) {
-            //Remove empty last Bus
-            delete Object.keys(tempCopy)[Object.keys(tempCopy).length - 1];
+        //* Removes last empty bus as long as it is not a bus from original list of buses from data
+        if(Object.entries(tempCopy[lastKey]).length === 0 && lastKey > originalNumberOfBuses){
+            delete tempCopy[lastKey];
         }
         setbusTripsObj(tempCopy);
+
     }
 
     const addSelectedToBus = ( busId) => {
+        if(selectedTrip){
+            //* GET selectedTrip to be added to the selected bus
+            const tripToAdd = tripsData.filter((item) => item.id === selectedTrip)[0];
 
-        //* GET selectedTrip to be added to the selected bus
-        const tripToAdd = tripsData.filter((item) => item.id === selectedTrip)[0];
+            //* Checks overlap between selected tripToAdd trip and existing trips in that bus
+            for (const trip in busTripsObj[busId]){
+                let tripToAddStarTime = tripToAdd.startTime;
+                let tripToAddEndTime = tripToAdd.endTime;
+                let existingTrips = busTripsObj[busId][trip];
+                if(existingTrips !== undefined && existingTrips.startTime){
+                    if(     tripToAddStarTime < existingTrips.startTime
+                        &&  tripToAddEndTime < existingTrips.endTime
+                        &&  tripToAddEndTime < existingTrips.startTime
+                        ||  tripToAddStarTime > existingTrips.endTime ){
+                        //* OK to add
+                        setAreTripsOverlapping(false);
+                    } else {
+                        setAreTripsOverlapping(true);
+                        return;
+                    }
+                }
 
-        //* Checks overlap between selected tripToAdd trip and existing trips in that bus
-        for (const trip in busTripsObj[busId]){
-            // console.log("tripToAdd", tripToAdd);
-            let tripToAddStarTime = tripToAdd.startTime;
-            let tripToAddEndTime = tripToAdd.endTime;
-            let existingTrips = busTripsObj[busId][trip];
-            if(     tripToAddStarTime < existingTrips.startTime
-                &&  tripToAddEndTime < existingTrips.endTime
-                &&  tripToAddEndTime < existingTrips.startTime
-                ||  tripToAddStarTime > existingTrips.endTime ){
-                //* OK to add
-                setAreTripsOverlapping(false);
-            } else {
-                setAreTripsOverlapping(true);
-                return;
+
             }
 
+            //* REMOVE the trip from old bus
+            let remove = Object.entries(busTripsObj).map(([bus, trips], index)=> {
+                if(trips[selectedTrip]){
+                    delete trips[selectedTrip];
+                }
+            });
+
+            const tripsToUpdate = {...busTripsObj}; // creates a copy of the trips object
+
+            //* ADD trip to selected Bus
+            tripsToUpdate[busId][selectedTrip] = tripToAdd;
+
+            //* Update Bus object
+            setbusTripsObj(tripsToUpdate);
+
+            //* Deselect selectedTrip
+            setSelectedTrip(false);
+
+            //* Remove last bus if empty
+            removeLastEmptyBus();
         }
 
-        //* REMOVE the trip from old bus
-        let remove = Object.entries(busTripsObj).map(([bus, trips], index)=> {
-
-            if(trips[selectedTrip]){
-                delete trips[selectedTrip];
-            }
-        });
-
-        const tripsToUpdate = {...busTripsObj}; // creates a copy of the trips object
-
-        //* ADD trip to selected Bus
-        tripsToUpdate[busId][selectedTrip] = tripToAdd;
-
-        //* Update Bus object
-        setbusTripsObj(tripsToUpdate);
-
-        //* Deselect selectedTrip
-        setSelectedTrip(false);
-
-        //* Remove last bus if empty
-        removeLastEmptyBus();
     };
 
     const tripItemsElement = Object.keys(busTripsObj).map((bus, index) => {
@@ -170,12 +184,14 @@ const BusScheduler = () => {
     return (
         <>
             <s.TripsContainer>
+                <s.TripsTitle>
+                    Bus Scheduler
+                </s.TripsTitle>
                 <s.TripContentItems>
                     {tripItemsElement}
                     {areTripsOverlapping && <s.OverlapError>oops, those trips overlap</s.OverlapError>}
                 </s.TripContentItems>
             </s.TripsContainer>
-
         </>
     );
 };

@@ -1,4 +1,4 @@
-import styled from 'styled-components/macro';
+import styled, { css } from 'styled-components/macro';
 
 export const TripsContainer = styled.div`
     background: #42505a;
@@ -8,7 +8,20 @@ export const TripsContainer = styled.div`
     flex-direction: column;
     overflow: hidden;
     transition: .2s ease-in all;
+    position: relative;
 `
+export const TripsTitle = styled.div`
+    position: absolute;
+    width: 100%;
+    //top: 50%;
+    //left: 50%;
+    //z-index: 1;
+    //transform: translate(-50%, -50%);
+    color: white;
+    text-align: center;
+    font-size: 2rem;
+    margin: 67px auto;
+ `
 
 export const TripContentItems = styled.div`
     position: relative;
@@ -40,6 +53,8 @@ export const BusLeftBar = styled.div`
 
 export const Bus = styled.div`
     border: 1px solid rgba(255, 255, 255, 0.3);
+    //background: ${props => props.key? "mediumseagreen" : "#777"};
+    background: ${p => p.key % 2 === 0 ? 'red' : 'white'}
     text-align: left;
     display: flex;
     color: white;
