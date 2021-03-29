@@ -10,7 +10,3 @@ export const App = styled.div`
   flex-direction: row;
   overflow: hidden;
 `
-
-export const Header = styled.h1`
-  color: pink
-`

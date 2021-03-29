@@ -8,17 +8,19 @@ const BusScheduler = () => {
         { "id": 2, "startTime": 180, "endTime": 300 },
         { "id": 3, "startTime": 330, "endTime": 450 },
         { "id": 4, "startTime": 40, "endTime": 130 },
-        { "id": 55, "startTime": 160, "endTime": 250 },
-        { "id": 66, "startTime": 280, "endTime": 370 },
-        { "id": 77, "startTime": 400, "endTime": 490 },
-        { "id": 88, "startTime": 80, "endTime": 240 },
-        { "id": 99, "startTime": 280, "endTime": 430 }
+        { "id": 5, "startTime": 160, "endTime": 250 },
+        { "id": 6, "startTime": 280, "endTime": 370 },
+        { "id": 7, "startTime": 400, "endTime": 490 },
+        { "id": 8, "startTime": 80, "endTime": 240 },
+        { "id": 9, "startTime": 280, "endTime": 430 }
     ]);
     const [busTripsObj, setbusTripsObj] = useState({});
     const [originalNumberOfBuses, setOriginalNumberOfBuses] = useState(null);
     const [areTripsOverlapping, setAreTripsOverlapping] = useState(false);
     const [haveError, setHaveError] = useState(false);
     const [selectedTrip, setSelectedTrip] = useState(null);
+    const [allBusTripsMinArray, setAllBusTripsMinArray] = useState([]);
+    const [allBusTripsMaxArray, setAllBusTripsMaxArray] = useState([]);
 
     const handleTripItemClick = (e, tripId) => {
         e.stopPropagation();
@@ -44,7 +46,6 @@ const BusScheduler = () => {
                 return response.json();
             })
             .then(function(json) {
-                console.log(json);
                 setTripsData(json);
             })
             .catch(error => {
@@ -61,9 +62,10 @@ const BusScheduler = () => {
             return busTripsObj[inx] = {[trip.id]:trip};
         });
 
-        const maxTripValue = Math.max.apply(Math, tripsData.map(function(o) { return o.endTime; }));
-        const minTripValue = Math.min.apply(Math, tripsData.map(function(o) { return o.startTime; }));
-
+        const minTripsValue = Math.min.apply(Math, tripsData.map((o) => { return o.startTime; }));
+        const maxTripsValue = Math.max.apply(Math, tripsData.map((o) => { return o.endTime; }));
+        setAllBusTripsMinArray(minTripsValue);
+        setAllBusTripsMaxArray(maxTripsValue);
         setbusTripsObj(busTripsObj);
     }, []);
 
@@ -80,7 +82,6 @@ const BusScheduler = () => {
             let updatedIndex = Object.keys(busTripsObj).length +1;
             const tempCopy = {...busTripsObj};
             tempCopy[updatedIndex] = {};
-
             setbusTripsObj(tempCopy);
 
         }
@@ -148,14 +149,56 @@ const BusScheduler = () => {
 
     };
 
-    const tripItemsElement = Object.keys(busTripsObj).map((bus, index) => {
+    const generateUUID = () => {
+        let d = new Date().getTime();
+        let uuid = 'xxxxxxxx-AAGxxx-Dxxx-Axxx-Nxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            let r = (d + Math.random() * 5) % 5 | 0;
+            d = Math.floor(d / 16);
+            return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
+        return uuid;
+    }
 
-        let tripsObj = busTripsObj[bus];
+    const ticmarkCreator = (left, right, parts) => {
+        //* adapted from https://stackoverflow.com/questions/51250608/split-a-dynamic-range-into-equal-parts-using-js
+            let result = [],
+                delta = Math.floor((right - left) / (parts));
+            while (left < right) {
+                result.push(left);
+                left += delta;
+            }
+            result.push(right);
+            return result;
+        };
+    const tickmarks = ticmarkCreator(0, allBusTripsMaxArray, 5);
+    const tickMarkElements = tickmarks.map((tick)=> {
+        let mins = Math.floor(tick/60);
+        let hrs = mins.toFixed(2);
+        let spl = hrs.split('.');
+        hrs = spl.join(':');
+
+        return (
+            <s.ContentTickMark key={tick} tick={tick}><span>{hrs}</span></s.ContentTickMark>
+        )
+    });
+
+    let currentIndex = 0;
+    const BusItemsElements = Object.keys(busTripsObj).map((bus, index) => {
+
+        currentIndex = index;
+        const busTripsEndTimeArray = [];
+        const busTripsStartTimeArray = [];
+
+        const tripsObj = busTripsObj[bus];
         let singleTrip = Object.keys(tripsObj).map(trips => {
-            let trip = tripsObj[trips];
-            if(trip){
-                const isTripSelected = selectedTrip === trip.id;
 
+            let trip = tripsObj[trips];
+
+            if(trip){
+
+                busTripsEndTimeArray.push(trip.endTime);
+                busTripsStartTimeArray.push(trip.startTime);
+                const isTripSelected = selectedTrip === trip.id;
                 return (<s.Trip
                     key={trip.id}
                     id={trip.id}
@@ -169,30 +212,53 @@ const BusScheduler = () => {
 
         });
 
-        return (
+        const sortedMin = busTripsStartTimeArray.sort((a, b) => a - b)[0];
+        const sortedMax = busTripsEndTimeArray.sort((a, b) => b - a)[0];
+
+        const busLeftBar = <s.BusLeftBarItems key={generateUUID()}>
+            <h3>Bus {index +1}</h3>
+            <s.BusMinMaxTripTime>
+                <p>{sortedMin} - {sortedMax}</p>
+            </s.BusMinMaxTripTime>
+        </s.BusLeftBarItems>
+
+        const tripElements = (
                 <s.Bus key={index}
                        busId={index}
                        id={+`${index +1}`}
                        onClick={() => addSelectedToBus(+`${index +1}`)}
-                >bus:{index +1}
+                >
                     {singleTrip}
                 </s.Bus>
         )
+        return ( <s.BusWrapper key={generateUUID()}>
+                        <s.BusLeftBar>{busLeftBar}</s.BusLeftBar>
+                        <s.BusRightBar>
+                            {tripElements}
+                        </s.BusRightBar>
+                    </s.BusWrapper>
+                )
 
     });
 
     return (
-        <>
-            <s.TripsContainer>
-                <s.TripsTitle>
+            <s.SchedulerContainer>
+                <s.SchedulerTitle>
                     Bus Scheduler
-                </s.TripsTitle>
-                <s.TripContentItems>
-                    {tripItemsElement}
-                    {areTripsOverlapping && <s.OverlapError>oops, those trips overlap</s.OverlapError>}
-                </s.TripContentItems>
-            </s.TripsContainer>
-        </>
+                    <s.SchedulerDescription>
+                        <p>Each row represents a bus on the 38 Geary bus line in San Francisco.</p>
+                        <p>Please click on the white boxes. Each box is a trip, and can be moved from bus to bus.</p>
+                        <p>To move a trip just select it and then click on the row of the new bus.</p>
+                        <p>If the data changes, for example if trips are added that are later in the day,</p>
+                        <p>the tick marks and time will update to reflect the new data range.</p>
+                    </s.SchedulerDescription>
+                </s.SchedulerTitle>
+                <s.SchedulerContent index={currentIndex} width={allBusTripsMaxArray}>
+                    {tickMarkElements}
+                    {BusItemsElements}
+                    {areTripsOverlapping && <s.OverlapError>Oops, those trips overlap.</s.OverlapError>}
+                </s.SchedulerContent>
+            </s.SchedulerContainer>
     );
 };
 

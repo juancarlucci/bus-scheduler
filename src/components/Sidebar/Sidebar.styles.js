@@ -1,4 +1,4 @@
-import styled, { css } from 'styled-components/macro';
+import styled from 'styled-components/macro';
 
 export const SidebarContainer = styled.div`
     background: ${p => p.backgroundColor};
@@ -89,9 +89,6 @@ export const SidebarContentSubTitle = styled.div`
 `
 
 export const SidebarContentItems = styled.div`
-    //border-right-color: rgb(163, 174, 182);
-    //border-right-style: solid;
-    //border-right-width: 1px;
     color: rgb(66, 80, 90);
     display: block;
     flex-grow: 1;
@@ -100,7 +97,6 @@ export const SidebarContentItems = styled.div`
 export const SidebarMenuItem = styled.div`
     align-items: center;
     display: flex;
-    //color: ${p => p.selected ? 'white' : 'darkgray'};
     flex-direction: row;
     flex-grow: 0;
     flex-shrink: 0;

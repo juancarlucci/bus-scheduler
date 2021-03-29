@@ -1,5 +1,6 @@
 import React from "react";
 import Centerbar from "../../Centerbar/Centerbar";
+import * as s from "./Home.styles";
 
 const logo = {
     full:'img/logo.svg',
@@ -9,11 +10,12 @@ const contentTitle = 'RemixHome';
 const backgroundColor = '#273d56';
 const textColor = '#199ADC';
 const menuItems = [
-    {name: 'Bus Services', to: '/bus', icon: '/icons/bus-icon.svg', subMenuItems: [] },
+    {name: 'Bus Scheduler', to: '/bus', icon: '/icons/bus-icon.svg'},
 ];
 
 const Home = () => {
-    return <>
+    return (<>
+                <s.HomeContainer>
                 <Centerbar
                     logo={logo}
                     contentTitle={contentTitle}
@@ -21,7 +23,8 @@ const Home = () => {
                     textColor={textColor}
                     menuItems={menuItems}
                 />
-            </>
+                </s.HomeContainer>
+            </>)
 };
 
 export default Home;

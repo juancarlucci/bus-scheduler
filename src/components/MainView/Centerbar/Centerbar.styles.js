@@ -1,7 +1,10 @@
 import styled, { css } from 'styled-components/macro';
 
 export const CenterbarContainer = styled.div`
-    background: ${p => p.backgroundColor};
+    //background: ${p => p.backgroundColor};
+    background-image: linear-gradient(#199ADC, #13264b);
+    //background-image: url('/img/38Geary.png');
+    // background-repeat: no-repeat;
     color: white;
     height: 100vh;
     overflow: hidden;
@@ -13,7 +16,7 @@ export const CenterbarContainer = styled.div`
 export const CenterbarContentWrapper = styled.div`
     background: ${p => p.backgroundColor};
     color: ${p => p.textColor};
-    width: 320px;
+    width: 520px;
     position: relative;
     top: 50%;
     left: 50%;
@@ -32,7 +35,7 @@ export const CenterbarMenuContainer = styled.div`
     box-shadow: rgba(0, 0, 0, 0.2) 0px 2px 4px -1px, 
                 rgba(0, 0, 0, 0.14) 0px 4px 5px 0px, 
                 rgba(0, 0, 0, 0.12) 0px 1px 10px 0px;
-    width: 320px;
+    //width: 320px;
     transform: matrix(1, 0, 0, 1, 0, 0);
     transition-delay: 0s;
     transition-duration: 0.3s;
@@ -82,7 +85,6 @@ export const CenterbarContentHeader = styled.div`
     box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 3px 0px;
     color: rgb(66, 80, 90);
     display: block;
-    font-size: ${p => p.isCenterbarOpen ? '1.8rem': '.7rem'};
     font-weight: 600;
     opacity: 0.85;
     padding: 8px 16px;
@@ -95,26 +97,26 @@ export const CenterbarContentSubTitle = styled.div`
 `
 
 export const CenterbarContentItems = styled.div`
-    //border-right-color: rgb(163, 174, 182);
-    //border-right-style: solid;
-    //border-right-width: 1px;
     color: rgb(66, 80, 90);
     display: block;
     flex-grow: 1;
     text-align: center;
 `
+
+export const CenterbarContentMain = styled.div`
+    color: white;
+    padding: 8px 16px;
+`
+
 export const CenterbarMenuItem = styled.div`
     align-items: center;
     display: flex;
-    //color: ${p => p.selected ? 'white' : 'darkgray'};
     flex-direction: row;
     flex-grow: 0;
     flex-shrink: 0;
-    font-weight: ${p => p.selected ? '600' : '300'};
     justify-content: flex-start;
     padding: 8px 16px;
     text-align: left;
-    border: ${p => p.selected ? '1px solid rgba(255, 255, 255, 0.3)' : '1px solid transparent'};
     border-left: none;
     border-right: none;
     transition: .2s ease-in all;
