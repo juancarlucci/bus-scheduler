@@ -75,10 +75,13 @@ export const BusWrapper = styled.div`
 `
 
 export const BusLeftBar = styled.div`
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    //border: 1px solid rgba(255, 255, 255, 0.3);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+
     width: 200px;
     height: 100%;
-    text-align: left;
+    //text-align: left;
     display: flex;
     flex-direction: column;
     color: white;
@@ -90,7 +93,7 @@ export const BusLeftBar = styled.div`
 export const BusLeftBarItems = styled.div`
   display: flex;
   align-items: center;
-  border-right: 1px solid gray;
+  //border-right: 1px solid gray;
   height: 33px;
      
 `
@@ -106,7 +109,7 @@ export const BusRightBar = styled.div`
     text-align: left;
     display: flex;
     flex-direction: column;
-    margin-right: 7px;
+    margin-right: 0px;
     transition: .2s ease-in all;
     position: relative;
 `
@@ -114,6 +117,7 @@ export const BusRightBar = styled.div`
 export const Bus = styled.div`
     border-top: 1px solid rgba(255, 255, 255, 0.3);
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    border: ${p => p.busId % 2 === 0 ? 'red' : 'transparent'};
     height: 33px;
     display: flex;
     flex-direction: column;

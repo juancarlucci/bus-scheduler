@@ -170,12 +170,16 @@ const BusScheduler = () => {
             result.push(right);
             return result;
         };
-    const tickmarks = ticmarkCreator(0, allBusTripsMaxArray, 5);
-    const tickMarkElements = tickmarks.map((tick)=> {
+    const converTripTimeToHours = (tick) => {
         let mins = Math.floor(tick/60);
         let hrs = mins.toFixed(2);
         let spl = hrs.split('.');
         hrs = spl.join(':');
+        return hrs;
+    }
+    const tickmarks = ticmarkCreator(0, allBusTripsMaxArray, 5);
+    const tickMarkElements = tickmarks.map((tick)=> {
+        let hrs = converTripTimeToHours(tick);
 
         return (
             <s.ContentTickMark key={tick} tick={tick}><span>{hrs}</span></s.ContentTickMark>
@@ -212,13 +216,20 @@ const BusScheduler = () => {
 
         });
 
+        //* BusLeftBarItems: gets minimum trip.strartTime, and maximum trip.endTime.
         const sortedMin = busTripsStartTimeArray.sort((a, b) => a - b)[0];
         const sortedMax = busTripsEndTimeArray.sort((a, b) => b - a)[0];
+        //* Converts startTime and endTime to hours and displays them.
+        let hrsMin = converTripTimeToHours(sortedMin) || 0;
+        let hrsMax = converTripTimeToHours(sortedMax) || 0;
+        //* When bus has no trips, prevents "NaN" form displaying.
+        if(hrsMin === 'NaN') hrsMin = '';
+        if(hrsMax === 'NaN') hrsMax = '';
 
         const busLeftBar = <s.BusLeftBarItems key={generateUUID()}>
             <h3>Bus {index +1}</h3>
             <s.BusMinMaxTripTime>
-                <p>{sortedMin} - {sortedMax}</p>
+                <p>{hrsMin} - {hrsMax}</p>
             </s.BusMinMaxTripTime>
         </s.BusLeftBarItems>
 
