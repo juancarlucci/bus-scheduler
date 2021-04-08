@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import * as s from "./BusScheduler.styles";
-
+// import streetImg from './img/street-illustration.png';
+// console.log("process.env.PUBLIC_URL", `%PUBLIC_URL%`);
 const BusScheduler = () => {
     //* STATE
     const [tripsData, setTripsData] = useState( [
@@ -253,7 +254,7 @@ const BusScheduler = () => {
     });
 
     return (
-            <s.SchedulerContainer>
+            <s.SchedulerContainer >
                 <s.SchedulerTitle>
                     Bus Scheduler
                     <s.SchedulerDescription>

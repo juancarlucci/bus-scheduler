@@ -1,7 +1,9 @@
 import styled from 'styled-components/macro';
 
 export const SchedulerContainer = styled.div`
-    background: #42505a;
+    //background: #42505a;
+    // background-image: url(${p => p.streetIMG});
+    background-image: url(./img/street-illustration.png);
     height: 100vh;
     width: 100%;
     overflow: auto;
@@ -18,9 +20,7 @@ export const SchedulerTitle = styled.div`
  `
 
 export const SchedulerDescription = styled.div`
-    //width: 100%;
     margin: 40px 0;
-    
     color: white;
     text-align: left;
     font-size: 1rem;
@@ -115,15 +115,16 @@ export const BusRightBar = styled.div`
 `
 
 export const Bus = styled.div`
-    border-top: 1px solid rgba(255, 255, 255, 0.3);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    border: ${p => p.busId % 2 === 0 ? 'red' : 'transparent'};
+    // border-top: 1px solid rgba(255, 255, 255, 0.3);
+    // border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    // border: ${p => p.busId % 2 === 0 ? 'red' : 'transparent'};
     height: 33px;
     display: flex;
     flex-direction: column;
     align-content: center;
     color: white;
     background: ${p => p.busId % 2 === 0 ? '#273d56' : 'transparent'};
+    //cursor: url('icons/bus-icon-blu.svg') 0,0, pointer;
     transition: .2s ease-in all;
     position: relative;
 `
