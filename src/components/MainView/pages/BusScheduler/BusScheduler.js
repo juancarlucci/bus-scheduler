@@ -1,7 +1,6 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import * as s from "./BusScheduler.styles";
-// import streetImg from './img/street-illustration.png';
-// console.log("process.env.PUBLIC_URL", `%PUBLIC_URL%`);
+
 const BusScheduler = () => {
     //* STATE
     const [tripsData, setTripsData] = useState( [
@@ -33,7 +32,8 @@ const BusScheduler = () => {
         }
     };
 
-    useEffect(() => {
+    useEffect(() => { //* fires after layout and paint, during deferred event
+
 
         fetch('./data/bus-scheduling-input.json'
             ,{
@@ -68,7 +68,8 @@ const BusScheduler = () => {
         setAllBusTripsMinArray(minTripsValue);
         setAllBusTripsMaxArray(maxTripsValue);
         setbusTripsObj(busTripsObj);
-    }, []);
+    }, []); //* adding empty [] to signal useEffect to work
+                  //* like ComponentDidMount
 
     useEffect(()=>{
         appendEmptyBusToBusTripsObj();

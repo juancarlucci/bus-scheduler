@@ -1,9 +1,11 @@
 import styled from 'styled-components/macro';
 
+
 export const SchedulerContainer = styled.div`
-    //background: #42505a;
-    // background-image: url(${p => p.streetIMG});
-    background-image: url(./img/street-illustration.png);
+    background: rgba(25, 154, 220, 0.2); //fallback
+    background-image: linear-gradient(to bottom, rgba(25, 154, 220, 0.52), rgba(39, 61, 86, 0.73)), url(./img/street-illustration.png);
+    background-size: cover;
+    background-position: center;
     height: 100vh;
     width: 100%;
     overflow: auto;
@@ -14,7 +16,6 @@ export const SchedulerContainer = styled.div`
 export const SchedulerTitle = styled.div`
     width: 100%;
     color: white;
-    //text-align: center;
     font-size: 2rem;
     margin: 67px 200px 80px 190px;
  `
@@ -75,13 +76,10 @@ export const BusWrapper = styled.div`
 `
 
 export const BusLeftBar = styled.div`
-    //border: 1px solid rgba(255, 255, 255, 0.3);
     border-top: 1px solid rgba(255, 255, 255, 0.3);
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-
     width: 200px;
     height: 100%;
-    //text-align: left;
     display: flex;
     flex-direction: column;
     color: white;
@@ -115,16 +113,13 @@ export const BusRightBar = styled.div`
 `
 
 export const Bus = styled.div`
-    // border-top: 1px solid rgba(255, 255, 255, 0.3);
-    // border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    // border: ${p => p.busId % 2 === 0 ? 'red' : 'transparent'};
     height: 33px;
     display: flex;
     flex-direction: column;
     align-content: center;
     color: white;
     background: ${p => p.busId % 2 === 0 ? '#273d56' : 'transparent'};
-    //cursor: url('icons/bus-icon-blu.svg') 0,0, pointer;
+    //cursor: url(./icons/bus-icon-blu.svg) 0,0, pointer;
     transition: .2s ease-in all;
     position: relative;
 `
@@ -139,7 +134,7 @@ export const Trip = styled.div`
   width: ${p => p.endTime - p.startTime}px;
   border: 1px solid rgba(255, 255, 255, 0.3);
   cursor: pointer;
-  transition: .2s ease-in all;
+  transition: .5s ease-in all;
 `
 
 export const OverlapError = styled.div`
